@@ -11,7 +11,7 @@ from apps import app
 import openai
 
 # Set your OpenAI API key
-openai.api_key = "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"
+openai.api_key = "xxxx-xxxx-xxxx"
 
 # App main route + generic routing
 @app.route('/', defaults={'path': 'index.html'})
