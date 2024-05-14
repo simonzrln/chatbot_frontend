@@ -1,0 +1,150 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}ChatGPT Interface{% endblock title %}
+
+{% block stylesheets %}
+<style>
+  
+    .bg-dark-gradient {
+        background: linear-gradient(87deg, #212529 0, #212529 100%) !important;
+    }
+
+    .text-gradient {
+        background: linear-gradient(87deg, #f5365c 0, #f56036 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .custom-card {
+        background-image: url('your-image-url.jpg');
+        background-size: cover;
+        background-position: center;
+        border-radius: .75rem;
+        overflow: hidden;
+    }
+    .mask {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+
+
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<body>
+  <div class="container-fluid py-4">
+      <div class="row">
+          <div class="col-lg-8">
+              <div class="row">
+                  <div class="col-xl-6 mb-xl-0 mb-4">
+                      <div class="card custom-card shadow-xl">
+                          <div class="mask"></div>
+                          <div class="card-body position-relative z-index-1 p-3">
+                              <i class="fas fa-wifi text-white p-2"></i>
+                              <h5 class="text-white mt-4 mb-5 pb-2">Informationen zu Long COVID</h5>
+                              <div class="d-flex">
+                                  <div class="me-4">
+                                      <p class="text-white text-sm opacity-8 mb-0">Wie man Long COVID erkennt</p>
+                                      <h6 class="text-white mb-0">Symptome und Zeichen</h6>
+                                  </div>
+                                  <div>
+                                      <p class="text-white text-sm opacity-8 mb-0">Wie man Hilfe bekommt</p>
+                                      <h6 class="text-white mb-0">Unterstützung und Beratung</h6>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="col-xl-6">
+                      <div class="card">
+                          <div class="card-header mx-4 p-3 text-center">
+                              <div class="icon icon-shape icon-lg bg-gradient-primary shadow text-center border-radius-lg">
+                                  <i class="fas fa-hand-holding-medical opacity-10"></i>
+                              </div>
+                          </div>
+                          <div class="card-body pt-0 p-3 text-center">
+                              <h6 class="text-center mb-0">Medizinische Ressourcen</h6>
+                              <span class="text-xs">Zugang zu Fachinformationen</span>
+                              <hr class="horizontal dark my-3">
+                              <h5 class="mb-0">Erkunden Sie mehr</h5>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="col-lg-4">
+              <div class="card h-100">
+                  <div class="card-header pb-0 p-3">
+                      <div class="row">
+                          <div class="col-6 d-flex align-items-center">
+                              <h6 class="mb-0">Weitere Informationen</h6>
+                          </div>
+                          <div class="col-6 text-end">
+                              <button class="btn btn-outline-primary btn-sm mb-0">Alle Artikel ansehen</button>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="card-body p-3 pb-0">
+                      <ul class="list-group">
+                          <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                              <div class="d-flex flex-column">
+                                  <h6 class="mb-1 text-dark font-weight-bold text-sm">Was ist Long COVID?</h6>
+                                  <span class="text-xs">#LC-101</span>
+                              </div>
+                              <div class="d-flex align-items-center text-sm">
+                                  Mehr Infos
+                                  <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4"><i class="fas fa-file-alt text-lg me-1"></i> Lesen</button>
+                              </div>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</body>
+
+
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+  function sendMessage(event) {
+    event.preventDefault();
+    const inputField = document.getElementById('messageInput');
+    const message = inputField.value;
+    displayUserMessage(message);
+    inputField.value = '';
+
+    fetch('/chatbot', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({prompt: message})
+    })
+    .then(response => response.json())
+    .then(data => {
+      displayChatbotMessage(data.result);
+    })
+    .catch(error => console.error('Error:', error));
+  }
+
+  function displayUserMessage(message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('chat-message', 'user-message');
+    messageDiv.textContent = message;
+    document.getElementById('chatLog').appendChild(messageDiv);
+  }
+
+  function displayChatbotMessage(message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('chat-message');
+    messageDiv.textContent = message;
+    document.getElementById('chatLog').appendChild(messageDiv);
+  }
+</script>
+{% endblock javascripts %}

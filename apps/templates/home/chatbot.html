@@ -1,0 +1,138 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}ChatGPT Interface{% endblock title %}
+
+{% block stylesheets %}
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    padding-top: 100px;
+    background-color: #f8f9fa;
+    margin-bottom: auto;
+  }
+
+  .message-input {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .form-control {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+    background-color: white;
+    height: 100%; /* Ensure it matches the button's height */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  }
+
+  .btn {
+    white-space: nowrap;
+    border-radius: 5px;
+    background-color: #CB0B9F;
+    color: white;
+    border: none;
+    height: 100%; /* Ensure it matches the input's height */
+    padding: 10px; /* Same padding as the input */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  }
+
+  .chat-message {
+    margin: 5px 0;
+    padding: 10px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    width: fit-content;
+  }
+
+  .user-message {
+    align-self: flex-start;
+    background-color: #CB0B9F;
+    color: white;
+  }
+
+  .chatbot-message {
+    align-self: flex-end;
+    background-color: #e0e0e0;
+  }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="chat-container">
+  <div class="card-body" id="chatLog">
+    <!-- Messages will be displayed here -->
+  </div>
+  <div class="message-input">
+    <form role="form" onsubmit="sendMessage(event)" style="display: flex; width: 100%; max-width: 800px;">
+      <input type="text" id="messageInput" class="form-control" placeholder="Message the Chatbot" aria-label="Chatbot">
+      <button type="submit" class="btn">Send</button>
+    </form>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+  function sendMessage(event) {
+    event.preventDefault();
+    const inputField = document.getElementById('messageInput');
+    const message = inputField.value;
+    displayUserMessage(message);
+    inputField.value = '';
+
+    fetch('/chatbot', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({prompt: message})
+    })
+    .then(response => response.json())
+    .then(data => {
+      displayChatbotMessage(data.result);
+    })
+    .catch(error => console.error('Error:', error));
+  }
+
+  function displayUserMessage(message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('chat-message', 'user-message');
+    messageDiv.textContent = message;
+    document.getElementById('chatLog').appendChild(messageDiv);
+  }
+
+  function displayChatbotMessage(message) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('chat-message', 'chatbot-message');
+    messageDiv.textContent = message;
+    document.getElementById('chatLog').appendChild(messageDiv);
+  }
+</script>
+{% endblock javascripts %}
